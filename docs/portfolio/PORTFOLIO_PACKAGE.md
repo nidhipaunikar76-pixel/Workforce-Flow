@@ -167,32 +167,3 @@ Establish baselines for decision time, pending age, escalation rate, and notific
 | Keep notification failure separate from request save | Avoid losing an approval because notification delivery fails. | Failures are marked for retry; automatic retry is not implemented. |
 | Use SQLite and an additive MVP schema | Keep local setup simple and preserve existing demo data during updates. | Use migrations and a managed database before production. |
 
-## 8. Test Results
-
-Run with:
-
-```powershell
-dotnet test .\WorkforceFlow.Tests\WorkforceFlow.Tests.csproj --logger "console;verbosity=detailed"
-```
-
-The current suite has eight passing in-memory SQLite integration tests covering duplicate requests, date conflicts, unavailable approvers, forbidden access, notification failures, team composition, leave-start/resume alerts and privacy/read state, and audit/dashboard reconciliation. These verify implemented behavior, not production adoption.
-
-## 9. Five-Minute Demo Script
-
-| Time | Demo action | Product point |
-|---|---|---|
-| 0:00-0:30 | State the problem hypothesis and identify employee, manager, teammate, and HR users. | Frame the problem without claiming completed discovery. |
-| 0:30-1:15 | As Elliot, submit a request; show status and duplicate/overlap protections. | Request integrity and employee feedback. |
-| 1:15-2:00 | Switch to Morgan and approve or reject a request. | Clear ownership and auditable decisions. |
-| 2:00-2:45 | On Dashboard, enable manager out-of-office and disable active delegate; submit another request; open HR Exceptions. | Exception path is intentional, not a dead end. |
-| 2:45-3:45 | Open Teams as Avery, show status-only visibility and unread alert; switch to Morgan to show date visibility; mark the alert read. | Privacy trade-off and notification lifecycle. |
-| 3:45-4:30 | Show the HR audit trail and Dashboard status counts. | Traceability and operational visibility. |
-| 4:30-5:00 | Summarize decisions, eight passing tests, and proposed next measures. | Close with evidence and next validation, not invented impact. |
-
-## 10. Portfolio Presentation Checklist
-
-- Include screenshots of the employee request, approval queue, HR audit, team roster, and dashboard.
-- Link the repository and a deployed demo; do not use localhost as a public demo link.
-- Label demo teams and users as synthetic data.
-- Identify this as a self-directed MVP and distinguish tested behavior from unvalidated hypotheses.
-- Do not claim user adoption, saved time, ROI, or production readiness without evidence.
