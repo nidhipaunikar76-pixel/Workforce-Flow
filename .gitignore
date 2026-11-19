@@ -1,0 +1,19 @@
+# .NET build output
+**/bin/
+**/obj/
+.vs/
+
+# Local SQLite database and write-ahead log files
+workforceflow.db
+workforceflow.db-shm
+workforceflow.db-wal
+
+# Test and diagnostic output
+TestResults/
+*.log
+
+# Machine-specific editor settings
+.vscode/
+.idea/
+*.user
+*.suo

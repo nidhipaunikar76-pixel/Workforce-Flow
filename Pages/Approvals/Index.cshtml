@@ -1,0 +1,46 @@
+@page "/Approvals"
+@model Workforce_Flow.Pages.Approvals.IndexModel
+@{
+    ViewData["Title"] = "Approvals";
+}
+
+<section class="page-heading">
+    <div><p class="eyebrow">MANAGER WORKSPACE</p><h1>Approvals</h1></div>
+    <p class="heading-note">Requests assigned to @Model.CurrentUser?.Name.</p>
+</section>
+
+@if (Model.CurrentUser?.Role != Workforce_Flow.Models.UserRole.Manager)
+{
+    <div class="notice">Choose a manager or delegate in the header to review assigned requests.</div>
+}
+else if (Model.Requests.Count == 0)
+{
+    <section class="panel empty-panel"><h2>All caught up</h2><p class="muted">There are no submitted requests in your queue.</p></section>
+}
+else
+{
+    <section class="panel">
+        <div class="section-title"><h2>Pending requests</h2><span class="count">@Model.Requests.Count</span></div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Employee</th><th>Dates</th><th>Submitted</th><th>Decision</th></tr></thead>
+                <tbody>
+                @foreach (var request in Model.Requests)
+                {
+                    <tr>
+                        <td>Employee #@request.EmployeeId</td>
+                        <td>@request.StartDate.ToString("MMM d") – @request.EndDate.ToString("MMM d, yyyy")</td>
+                        <td>@request.SubmittedAt.ToLocalTime().ToString("MMM d, yyyy")</td>
+                        <td>
+                            <div class="row-actions">
+                                <form method="post" asp-page-handler="Approve"><input type="hidden" name="id" value="@request.Id" /><button class="button button-small" type="submit">Approve</button></form>
+                                <form method="post" asp-page-handler="Reject"><input type="hidden" name="id" value="@request.Id" /><button class="button button-small button-quiet" type="submit">Reject</button></form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </section>
+}

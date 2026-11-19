@@ -1,0 +1,22 @@
+@model Workforce_Flow.Infrastructure.RoleSwitcherViewModel
+<a class="notification-shortcut" asp-page="/Teams/Index" aria-label="Team updates, @Model.UnreadCount unread">
+    Updates
+    @if (Model.UnreadCount > 0)
+    {
+        <span class="unread-badge">@Model.UnreadCount</span>
+    }
+</a>
+<form method="post" asp-page="/Index" asp-page-handler="SwitchContext" class="context-controls">
+    <label for="userId">Acting as</label>
+    <select id="userId" name="userId" aria-label="Current demo user">
+        @foreach (var user in Model.Users)
+        {
+            <option value="@user.Id" selected="@(Model.CurrentUserId == user.Id)">@user.Name (@user.Role)</option>
+        }
+    </select>
+    <label class="failure-toggle">
+        <input type="checkbox" name="simulateFailure" value="true" checked="@Model.SimulateFailure" />
+        Fail notifications
+    </label>
+    <button class="button button-small" type="submit">Apply</button>
+</form>

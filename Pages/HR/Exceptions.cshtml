@@ -1,0 +1,65 @@
+@page "/HR/Exceptions"
+@model Workforce_Flow.Pages.HR.ExceptionsModel
+@{
+    ViewData["Title"] = "HR exceptions";
+}
+
+<section class="page-heading">
+    <div><p class="eyebrow">PEOPLE OPERATIONS</p><h1>HR exceptions</h1></div>
+    <p class="heading-note">Escalations and the immutable decision trail.</p>
+</section>
+
+@if (Model.CurrentUser?.Role != Workforce_Flow.Models.UserRole.HR)
+{
+    <div class="notice">Choose the HR demo user in the header to view escalations and the audit log.</div>
+}
+else
+{
+    <section class="panel table-panel">
+        <div class="section-title"><div><p class="eyebrow">NEEDS REVIEW</p><h2>Escalated requests</h2></div><span class="count">@Model.EscalatedRequests.Count</span></div>
+        @if (Model.EscalatedRequests.Count == 0)
+        {
+            <p class="empty-state">No requests are waiting for HR.</p>
+        }
+        else
+        {
+            <div class="table-wrap"><table>
+                <thead><tr><th>Request</th><th>Employee</th><th>Dates</th><th>Submitted</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var request in Model.EscalatedRequests)
+                {
+                    <tr>
+                        <td>#@request.Id</td><td>Employee #@request.EmployeeId</td>
+                        <td>@request.StartDate.ToString("MMM d") – @request.EndDate.ToString("MMM d, yyyy")</td>
+                        <td>@request.SubmittedAt.ToLocalTime().ToString("MMM d, yyyy")</td>
+                        <td><form method="post" asp-page-handler="Abandon"><input type="hidden" name="id" value="@request.Id" /><button class="button button-small button-quiet" type="submit">Abandon</button></form></td>
+                    </tr>
+                }
+                </tbody>
+            </table></div>
+        }
+    </section>
+
+    <section class="panel table-panel audit-panel">
+        <div class="section-title"><div><p class="eyebrow">APPEND-ONLY RECORD</p><h2>Audit log</h2></div><span class="muted">Latest @Model.AuditEntries.Count events</span></div>
+        @if (Model.AuditEntries.Count == 0)
+        {
+            <p class="empty-state">Status changes will be recorded here automatically.</p>
+        }
+        else
+        {
+            <div class="table-wrap"><table>
+                <thead><tr><th>Time</th><th>Request</th><th>Actor</th><th>Transition</th><th>Notes</th></tr></thead>
+                <tbody>
+                @foreach (var entry in Model.AuditEntries)
+                {
+                    <tr>
+                        <td>@entry.Timestamp.ToLocalTime().ToString("MMM d, yyyy HH:mm")</td><td>#@entry.LeaveRequestId</td><td>@entry.Actor.Name</td>
+                        <td>@(entry.OldStatus ?? "Created") <span aria-hidden="true">&#8594;</span> @entry.NewStatus</td><td>@entry.Notes</td>
+                    </tr>
+                }
+                </tbody>
+            </table></div>
+        }
+    </section>
+}

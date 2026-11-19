@@ -1,0 +1,96 @@
+@page "/Teams"
+@model Workforce_Flow.Pages.Teams.IndexModel
+@{
+    ViewData["Title"] = "Project teams";
+}
+
+<section class="page-heading">
+    <div><p class="eyebrow">PEOPLE / PROJECT DELIVERY</p><h1>Project teams</h1></div>
+    <p class="heading-note">Approved leave is highlighted for teammates and managers. Updates are scoped to your selected demo user.</p>
+</section>
+
+<section class="team-updates">
+    <div class="section-title">
+        <div><p class="eyebrow">YOUR INBOX</p><h2>Leave updates</h2></div>
+        <div class="inbox-actions">
+            <span class="count" aria-label="Unread updates">@Model.UnreadNotificationCount</span>
+            @if (Model.UnreadNotificationCount > 0)
+            {
+                <form method="post" asp-page-handler="MarkAllRead">
+                    <button class="text-action" type="submit">Mark all read</button>
+                </form>
+            }
+        </div>
+    </div>
+    @if (Model.Notifications.Count == 0)
+    {
+        <p class="empty-state">No leave updates for @Model.CurrentUser?.Name.</p>
+    }
+    else
+    {
+        <div class="notification-list">
+        @foreach (var notification in Model.Notifications)
+        {
+            <article class="leave-notification @(notification.Type == Workforce_Flow.Models.NotificationType.LeaveResumed ? "notification-resumed" : "notification-started") @(notification.IsRead ? "notification-read" : "notification-unread")">
+                <div class="notification-tags">
+                    <span class="notification-type">@(notification.Type == Workforce_Flow.Models.NotificationType.LeaveStarted ? "ON LEAVE" : "RESUMED")</span>
+                    <span class="notification-audience">@(notification.Audience == Workforce_Flow.Models.NotificationAudience.Manager ? "Manager alert" : "Team alert")</span>
+                </div>
+                <p>@notification.Message</p>
+                <time datetime="@notification.CreatedAt.ToString("O")">@notification.CreatedAt.ToLocalTime().ToString("MMM d, yyyy h:mm tt")</time>
+                @if (notification.IsRead)
+                {
+                    <span class="read-label">Read</span>
+                }
+                else
+                {
+                    <form method="post" asp-page-handler="MarkRead">
+                        <input type="hidden" name="id" value="@notification.Id" />
+                        <button class="text-action" type="submit">Mark read</button>
+                    </form>
+                }
+            </article>
+        }
+        </div>
+    }
+</section>
+
+<div class="teams-list">
+@foreach (var team in Model.Teams)
+{
+    <section class="team-section" aria-labelledby="team-@team.ProjectCode">
+        <div class="team-heading">
+            <div><p class="eyebrow">@team.ProjectCode</p><h2 id="team-@team.ProjectCode">@team.Name</h2></div>
+            <p>@team.Description</p>
+        </div>
+        <div class="team-table-wrap">
+            <table class="team-table">
+                <thead><tr><th>Member</th><th>Project role</th><th>Availability</th></tr></thead>
+                <tbody>
+                @foreach (var member in team.Members)
+                {
+                    <tr class="@(member.IsOnLeave ? "member-row-on-leave" : string.Empty)">
+                        <td><strong>@member.Name</strong></td>
+                        <td>@member.Role</td>
+                        <td>
+                            @if (member.IsOnLeave)
+                            {
+                                <span class="leave-highlight">ON LEAVE</span>
+                                @if (team.CanSeeLeaveDates)
+                                {
+                                    <span class="leave-dates">@member.LeaveStart?.ToString("MMM d") – @member.LeaveEnd?.ToString("MMM d")</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="available-label">Available</span>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </section>
+}
+</div>

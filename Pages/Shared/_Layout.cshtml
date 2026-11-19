@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WorkforceFlow</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-main">
+            <a class="brand" asp-page="/Dashboard" aria-label="WorkforceFlow dashboard"><span class="brand-mark">W</span><span>Workforce<span class="brand-light">Flow</span></span></a>
+            <nav class="main-nav" aria-label="Main navigation">
+                <a asp-page="/Dashboard">Overview</a>
+                <a asp-page="/Requests/Create">Requests</a>
+                <a asp-page="/Teams/Index">Teams</a>
+                <a asp-page="/Approvals/Index">Approvals</a>
+                <a asp-page="/HR/Exceptions">HR exceptions</a>
+            </nav>
+            <div class="demo-controls">
+                <span class="demo-label">DEMO CONTEXT</span>
+                @await Component.InvokeAsync("RoleSwitcher")
+            </div>
+        </div>
+    </header>
+    <main class="page-shell" role="main">
+        @RenderBody()
+    </main>
+    <footer class="site-footer">
+        <span>WORKFORCEFLOW MVP</span><span>Local workflow demo</span>
+    </footer>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

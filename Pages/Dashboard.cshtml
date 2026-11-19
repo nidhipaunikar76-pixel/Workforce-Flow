@@ -1,0 +1,46 @@
+@page "/Dashboard"
+@model Workforce_Flow.Pages.DashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<section class="page-heading dashboard-heading">
+    <div><p class="eyebrow">WORKFORCE FLOW / OVERVIEW</p><h1>Leave operations</h1></div>
+    <p class="heading-note">A live view of the request pipeline, read directly from the database.</p>
+</section>
+
+<section class="metrics-grid" aria-label="Request totals">
+    @foreach (var status in Enum.GetValues<Workforce_Flow.Models.LeaveRequestStatus>())
+    {
+        <article class="metric metric-@status.ToString().ToLowerInvariant()">
+            <span class="metric-label">@status</span>
+            <strong>@Model.Counts[status]</strong>
+            <span class="metric-caption">requests</span>
+        </article>
+    }
+</section>
+
+<section class="routing-controls">
+    <div>
+        <p class="eyebrow">DEMO ROUTING</p>
+        <h2>Approver availability</h2>
+    </div>
+    <form method="post" asp-page-handler="UpdateRouting" class="routing-form">
+        <label><input asp-for="Routing.ManagerOutOfOffice" /> Manager out of office</label>
+        <label><input asp-for="Routing.ActiveDelegation" /> Active delegate</label>
+        <button class="button button-small" type="submit">Save routing</button>
+    </form>
+    @if (Model.RoutingUpdated)
+    {
+        <p class="routing-feedback" role="status">Routing settings updated.</p>
+    }
+</section>
+
+<section class="dashboard-bottom">
+    <div><p class="eyebrow">CURRENT PIPELINE</p><h2>@Model.Total <span>total requests</span></h2></div>
+    <nav class="quick-links" aria-label="Workflow pages">
+        <a asp-page="/Requests/Create">Submit or track <span aria-hidden="true">&#8594;</span></a>
+        <a asp-page="/Approvals/Index">Review approvals <span aria-hidden="true">&#8594;</span></a>
+        <a asp-page="/HR/Exceptions">Open HR exceptions <span aria-hidden="true">&#8594;</span></a>
+    </nav>
+</section>

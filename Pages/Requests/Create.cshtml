@@ -1,0 +1,67 @@
+@page
+@model Workforce_Flow.Pages.Requests.CreateModel
+@{
+    ViewData["Title"] = "Leave requests";
+}
+
+<section class="page-heading">
+    <div><p class="eyebrow">EMPLOYEE WORKSPACE</p><h1>Leave requests</h1></div>
+    <p class="heading-note">Submit time away and track every decision.</p>
+</section>
+
+@if (Model.Notice is not null)
+{
+    <div class="notice" role="status">@Model.Notice</div>
+}
+
+@if (Model.CurrentUser?.Role != Workforce_Flow.Models.UserRole.Employee)
+{
+    <div class="notice">Choose an employee in the header to submit and track leave requests.</div>
+}
+else
+{
+<div class="workspace-grid">
+    <section class="panel form-panel">
+        <h2>New request</h2>
+        <p class="muted">Submitting as <strong>@Model.CurrentUser?.Name</strong></p>
+        <form method="post" class="request-form">
+            <input asp-for="Input.IdempotencyKey" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+            <label asp-for="Input.StartDate">First day away</label>
+            <input asp-for="Input.StartDate" type="date" required />
+            <span asp-validation-for="Input.StartDate" class="field-error"></span>
+            <label asp-for="Input.EndDate">Last day away</label>
+            <input asp-for="Input.EndDate" type="date" required />
+            <span asp-validation-for="Input.EndDate" class="field-error"></span>
+            <button type="submit" class="button">Submit request <span aria-hidden="true">&#8594;</span></button>
+        </form>
+    </section>
+
+    <section class="panel list-panel">
+        <div class="section-title"><h2>Your requests</h2><span class="count">@Model.Requests.Count</span></div>
+        @if (Model.Requests.Count == 0)
+        {
+            <p class="empty-state">No requests yet. Your submissions will appear here.</p>
+        }
+        else
+        {
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Dates</th><th>Submitted</th><th>Status</th></tr></thead>
+                    <tbody>
+                    @foreach (var request in Model.Requests)
+                    {
+                        <tr>
+                            <td>@request.StartDate.ToString("MMM d") – @request.EndDate.ToString("MMM d, yyyy")</td>
+                            <td>@request.SubmittedAt.ToLocalTime().ToString("MMM d, yyyy")</td>
+                            <td><span class="status status-@request.Status.ToString().ToLowerInvariant()">@request.Status</span></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+</div>
+}
+
